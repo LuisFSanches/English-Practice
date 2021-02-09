@@ -18,6 +18,7 @@ const grammar = {
     {
       question: "2- The past of the verb run is...",
       answer: ["A) run.", "B) ran", "C) rin", "D) ron"],
+      correct_answer: "B) ran",
     },
     {
       question: "3- Which past tense use 'did' as  an auxiliar verb?",

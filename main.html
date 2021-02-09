@@ -76,14 +76,27 @@
   function increase(){
     index+=1
     const current_question =document.getElementById('question')
-    const current_answers =document.getElementById('answer')
     current_question.remove()
-    current_answers.remove()
+    const current_ul = document.getElementById('answers')
+    current_ul.remove()
+
+    for(let i=0;i<4;i++){
+      const string_index = i.toString()
+      const current_answers =document.getElementById(`answer${string_index}`)
+      current_answers.remove()
+    }
+
+    for(let i=0;i<4;i++){
+      const string_index = i.toString()
+      const current_answers =document.getElementById(`answerli${string_index}`)
+      current_answers.remove()
+    }
+   
     viewJson()
     console.log(index)
   }
- async function viewJson(){
-      const data = fetch('http://localhost:3333/grammar')
+ async function viewJson(subject){
+      const data = fetch(`http://localhost:3333/grammar`)
       const answers = []
       const correctAnswer = []
 
@@ -107,34 +120,41 @@
       paragraph.id = "question"
 
       const ul = document.createElement('ul')
+      index_string = index.toString()
       ul.id = "answers"
       element.appendChild(ul)
-
-
     
-      const button = document.createElement('button')
-      button.id= "button_answer"
-      button.addEventListener("click", function(e){
-        const get_button = document.getElementById("button_answer")
-        const get_answer = get_button.innerHTML
-        if(get_answer === correctAnswer[0]){
-          get_button.style.background = 'green'
-          up()
-        }
-        else{
-          get_button.style.background='red'
-        }
+        
+        for(let i = 0; i< answers.length;i++){
+          const answer = document.createTextNode(answers[i])
+          const li = document.createElement('li')
+          const button = document.createElement('button')
+          const string_index = i.toString()
+          button.id= `answer${string_index}`
+          button.addEventListener("click", function(e){
+              const get_button = document.getElementById(`answer${string_index}`)
+              const get_answer = get_button.innerHTML
+              console.log(get_answer)
+              if(get_answer === correctAnswer[0]){
+                  get_button.style.background = 'green'
+                  up()
+                  for(let i=0; i<answers.length;i++){
+                    document.getElementById(`answer${i}`).disabled=true
+                  }
+              }
+              else{
+                  get_button.style.background='red'
+                  down()
+                  for(let i=0; i<answers.length;i++){
+                    document.getElementById(`answer${i}`).disabled=true
+                  }
+               }
       }, false)
-
-      const answer = document.createTextNode(answers[2])
-      button.appendChild(answer)
-      const li = document.createElement('li')
-      li.id = "answer"
-      li.appendChild(button)
-      ul.appendChild(li)
-    
-  
-
+          li.id=`answerli${string_index}`
+          button.appendChild(answer)
+          li.appendChild(button)
+          ul.appendChild(li)
+        }
     }
 </script>
 </html>
