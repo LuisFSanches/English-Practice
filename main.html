@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <title>Document</title>
+</head>
+<body>
+  <div class="main">
+    <div class="menu">
+      <h1>English Quizz</h1>
+      <div class="options">
+        <div class="option">
+          <button onClick= "down()">
+            <img src="./assets/images/grammar.png" alt="">
+          </button>
+          <span>Grammar</span>
+        </div>
+
+        <div class="option">
+          <button onClick= "viewJson()">
+            <img src="./assets/images/vocabulary.png" alt="">
+          </button>
+          <span>Vocabulary</span>
+        </div>
+      </div>
+      </div>
+      <div class="questions">
+        <div class="question" id="questions">
+       
+          <ul id="answers"></ul>
+        </div>
+        <div class="move">
+          <button onClick="increase()"><img src="./assets/images/left-arrow.svg" alt=""></button>
+          <img src="./assets/images/right-arrow.svg" alt="">
+        </div>
+    </div>
+    <div class="w3-light-grey">
+      <div id="myBar" class="w3-container w3-blue w3-center" Style="width:0%">0%</div>
+    </div>
+    </div>
+  </div>
+</body>
+<script>
+
+  function up(){
+    var elem = document.getElementById("myBar")
+    var width = elem.style.width.split('%')[0];
+    var width_number = parseInt(width)
+    console.log(width_number)
+    if(width_number<100){
+      width_number = width_number + 10
+      elem.style.width = width_number + '%'
+      elem.innerHTML = width_number*1 + '%'
+    }
+    }
+
+    function down(){
+    var elem = document.getElementById("myBar")
+    var width = elem.style.width.split('%')[0];
+    var width_number = parseInt(width)
+    console.log(width_number)
+    if(width_number>0){
+      width_number = width_number - 10
+      elem.style.width = width_number + '%'
+      elem.innerHTML = width_number*1 + '%'
+    }
+  }
+
+
+  var index = 0
+  var index_String = index.toString()
+
+  function increase(){
+    index+=1
+    const current_question =document.getElementById('question')
+    const current_answers =document.getElementById('answer')
+    current_question.remove()
+    current_answers.remove()
+    viewJson()
+    console.log(index)
+  }
+ async function viewJson(){
+      const data = fetch('http://localhost:3333/grammar')
+      const answers = []
+      const correctAnswer = []
+
+      const question_data= data.then(function(response){
+        return response.json()
+      }).then(function(data){
+        const list = data.questions[index].answer
+        for(let i=0; i<list.length;i++){
+          answers.push(list[i])
+        }
+        correctAnswer.push(data.questions[index].correct_answer)
+        return (data.questions[index].question)
+      })
+
+      var element = document.getElementById('questions')
+
+      const paragraph = document.createElement('p');
+      const question = document.createTextNode(await question_data)
+      paragraph.appendChild(question)
+      element.appendChild(paragraph)
+      paragraph.id = "question"
+
+      const ul = document.createElement('ul')
+      ul.id = "answers"
+      element.appendChild(ul)
+
+
+    
+      const button = document.createElement('button')
+      button.id= "button_answer"
+      button.addEventListener("click", function(e){
+        const get_button = document.getElementById("button_answer")
+        const get_answer = get_button.innerHTML
+        if(get_answer === correctAnswer[0]){
+          get_button.style.background = 'green'
+          up()
+        }
+        else{
+          get_button.style.background='red'
+        }
+      }, false)
+
+      const answer = document.createTextNode(answers[2])
+      button.appendChild(answer)
+      const li = document.createElement('li')
+      li.id = "answer"
+      li.appendChild(button)
+      ul.appendChild(li)
+    
+  
+
+    }
+</script>
+</html>
